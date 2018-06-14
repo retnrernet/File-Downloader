@@ -18,10 +18,6 @@ class Download_Thread(QThread):
         size = (blocks_count+1) * block_size
         self.percent_size = size * 100 / total_size
         self.changedValue.emit(self.percent_size)
-        if size < total_size:
-            self.percent_size = size * 100 / total_size
-        else:
-            self.percent_size = 100
 
 
     def download(self, url, save_location):
@@ -35,8 +31,8 @@ class Download_Thread(QThread):
     def run(self):
         pass
 
-    def on_changed_value(self, value):
-        self.changedValue.emit(value)
+    #def on_changed_value(self, value):
+     #   self.changedValue.emit(value)
 
 
 

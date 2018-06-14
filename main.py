@@ -18,10 +18,11 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.setupUi(self)
         self.downloadThread = download.Download_Thread()
         self.setup_Ui()
-        self.handle_downloadButton()
-        self.handle_pasteButton()
+        self.init_Buttons()
+
         # Making the connection
         self.make_connection(self.downloadThread)
+
 
 
 
@@ -32,12 +33,14 @@ class MainApp(QMainWindow, FORM_CLASS):
         self.url_text.setText("")
         self.save_text.setText("")
 
-
-    def handle_downloadButton(self):
+    def init_Buttons(self):
         self.downloadButton.clicked.connect(self.download)
-
-    def handle_pasteButton(self):
+        self.cancelButton.clicked.connect(self.cancel)
         self.pasteButton.clicked.connect(self.paste_url)
+        self.browseButton.clicked.connect(self.browse)
+
+    def cancel(self):
+        self.downloadThread.exit()
 
     def paste_url(self):
         text = clipboard.paste()
@@ -50,19 +53,27 @@ class MainApp(QMainWindow, FORM_CLASS):
 
         self.downloadThread.download(url, save_location)
 
-
+    def browse(self):
+        save_location = QFileDialog.getSaveFileName(self, caption = "Save As", directory=".", filter = "All files (*.*)")
+        save_location = save_location[0]
+        save_location = save_location[2:]
+        self.save_text.setText(save_location)
 
     def make_connection(self, threadObj):
         self.downloadThread.changedValue.connect(self.update_progressBar)
 
     @pyqtSlot(int)
     def update_progressBar(self, val):
-        if val >= 100:
+        self.progressBar.setProperty("value", val)
+        if val > 100:
+            val = 100
             self.progressBar.setProperty("value", val)
-            QMessageBox.information(self, "Download Completed", "Your file has been downloaded successfully")
+            QMessageBox.information(self, "Download Completed", "Your file has been downloaded successfully", QMessageBox.Ok)
             self.url_text.setText("")
             self.save_text.setText("")
-            self.progressBar.setProperty("val", 0)
+            self.progressBar.setProperty("value", 0)
+            self.downloadThread.exit()
+
 
 
 def main():
@@ -70,7 +81,7 @@ def main():
     window = MainApp()
     window.show()
 
-    app.exec_()
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
