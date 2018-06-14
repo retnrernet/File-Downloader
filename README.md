@@ -1,3 +1,3 @@
 # File-Downloader
 
-File Downloader desktop application using PyQt5 and Qt Designer.
+Simple File Downloader GUI desktop application using PyQt5 and Qt Designer.
