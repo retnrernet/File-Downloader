@@ -5,6 +5,8 @@ import urllib.request
 class Download_Thread(QThread):
 
     changedValue = pyqtSignal(int)
+    downloadError = pyqtSignal()
+
 
     def __init__(self):
         QThread.__init__(self)
@@ -26,6 +28,7 @@ class Download_Thread(QThread):
             urllib.request.urlretrieve(url, save_location, self.calculateProgress)
 
         except:
+            self.downloadError.emit()
             print("Error")
 
     def run(self):

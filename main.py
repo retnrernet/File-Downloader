@@ -49,9 +49,16 @@ class MainApp(QMainWindow, FORM_CLASS):
     def download(self):
         url = self.url_text.text()
         save_location = self.save_text.text()
-        self.downloadThread.start()
-
-        self.downloadThread.download(url, save_location)
+        if url == None:
+            QMessageBox.warning(self, "No URL!", "You must specify URL to download your file")
+        self.browse()
+        if save_location == None:
+            save_location = "."
+        elif "http" not in url:
+            QMessageBox.warning(self, "Wrong URL!", "This is not a proper URL")
+        else:
+            self.downloadThread.start()
+            self.downloadThread.download(url, save_location)
 
     def browse(self):
         save_location = QFileDialog.getSaveFileName(self, caption = "Save As", directory=".", filter = "All files (*.*)")
@@ -61,6 +68,7 @@ class MainApp(QMainWindow, FORM_CLASS):
 
     def make_connection(self, threadObj):
         self.downloadThread.changedValue.connect(self.update_progressBar)
+        self.downloadThread.downloadError.connect(self.download_error)
 
     @pyqtSlot(int)
     def update_progressBar(self, val):
@@ -73,6 +81,12 @@ class MainApp(QMainWindow, FORM_CLASS):
             self.save_text.setText("")
             self.progressBar.setProperty("value", 0)
             self.downloadThread.exit()
+
+    @pyqtSlot()
+    def download_error(self):
+        QMessageBox.warning(self, "Error", "Sorry!, Cannot Download your file. Maybe you should check your connection", QMessageBox.Ok)
+
+
 
 
 
