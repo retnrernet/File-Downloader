@@ -1,12 +1,12 @@
 from PyQt5.QtCore import *
 import urllib.request
+import time
 
 
 class Download_Thread(QThread):
 
     changedValue = pyqtSignal(int)
     downloadError = pyqtSignal()
-
 
     def __init__(self):
         QThread.__init__(self)
@@ -22,6 +22,7 @@ class Download_Thread(QThread):
         self.changedValue.emit(self.percent_size)
 
 
+
     def download(self, url, save_location):
 
         try:
@@ -33,9 +34,4 @@ class Download_Thread(QThread):
 
     def run(self):
         pass
-
-    #def on_changed_value(self, value):
-     #   self.changedValue.emit(value)
-
-
 
