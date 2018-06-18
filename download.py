@@ -5,7 +5,7 @@ import time
 
 class Download_Thread(QThread):
 
-    changedValue = pyqtSignal(int)
+    changedValue = pyqtSignal(float)
     downloadError = pyqtSignal()
 
     def __init__(self):
@@ -17,11 +17,11 @@ class Download_Thread(QThread):
     def calculateProgress(self, blocks_count, block_size, total_size):
         if total_size == 0:
             pass
-        size = (blocks_count+1) * block_size
-        self.percent_size = size * 100 / total_size
-        self.changedValue.emit(self.percent_size)
+        #size = (blocks_count+1) * block_size
+        #self.percent_size = size * 100 / total_size
+        self.step = (block_size / total_size)
 
-
+            self.changedValue.emit(self.step)
 
     def download(self, url, save_location):
 
