@@ -2,11 +2,11 @@ from PyQt5.QtCore import *
 import urllib.request
 import time
 
-
 class Download_Thread(QThread):
 
-    changedValue = pyqtSignal(float)
+    changedValue = pyqtSignal(int)
     downloadError = pyqtSignal()
+    percent = 0
 
     def __init__(self):
         QThread.__init__(self)
@@ -17,14 +17,13 @@ class Download_Thread(QThread):
     def calculateProgress(self, blocks_count, block_size, total_size):
         if total_size == 0:
             pass
-        #size = (blocks_count+1) * block_size
-        #self.percent_size = size * 100 / total_size
-        self.step = (block_size / total_size)
-
-            self.changedValue.emit(self.step)
+        size = (blocks_count+1) * block_size
+        self.percent = size * 100 / total_size
+        self.changedValue.emit(self.percent)
+        #print("fom download")
 
     def download(self, url, save_location):
-
+        #print(url + ' ' + save_location + " from download f")
         try:
             urllib.request.urlretrieve(url, save_location, self.calculateProgress)
 
